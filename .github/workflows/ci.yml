@@ -1,0 +1,36 @@
+name: CI
+
+# 1. Trigger on push events to the main branch
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    # 2. Use an Ubuntu runner
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: MyWebApp   # where MyWebApp.csproj lives
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 3. Set up .NET SDK
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      # 4. Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # 5. Build and test the application
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Test
+        run: dotnet test --no-build --configuration Release --verbosity normal
